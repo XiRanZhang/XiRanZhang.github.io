@@ -58,6 +58,7 @@ export default defineConfig({
           text: '技术文章',
           items: [
             { text: '全部文章', link: '/posts/' },
+            { text: 'gh-ost 加唯一索引为什么会静默丢数据', link: '/posts/gh-ost-unique-index-data-loss' },
             { text: 'gh-ost 原理及源码解析', link: '/posts/gh-ost-principles-and-source' },
           ],
         },
