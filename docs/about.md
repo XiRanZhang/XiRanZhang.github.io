@@ -25,8 +25,12 @@ title: 关于
 ## 发表与开源
 
 - **[goInception #718](https://github.com/hanchuanchuan/goInception/pull/718)** —— 修复 gh-ost 执行器的管道死锁：InnoDB 行数估算偏差导致进度计数器溢出、reader 退出、管道写满阻塞，生产环境曾使迁移挂起一小时以上。改动只有 3 行，工作量全在定位上。（**PR 仍在 review 中**，尚未合并。）
-- **Gaea / Soar / KubeBlocks** —— 分别为小米分库分表中间件（分库分表在线改表）、SQL 审核组件、以及基于 KubeBlocks 的 Operator 做过贡献。这几项是在小米内部代码库上完成的，因此**不会出现在公开的提交历史里**（公开仓库是下游镜像）。
+- **在开源项目之上构建** —— 我的工作与 [KubeBlocks](https://github.com/apecloud/kubeblocks)（有状态 MySQL Operator）、[Gaea](https://github.com/XiaoMi/Gaea)（平台管理面）、[Soar](https://github.com/XiaoMi/soar)（SQL 审核引擎）相关，但都是在小米内部代码库上完成的，**不会出现在公开的提交历史里**（公开仓库是下游镜像）。这一点我如实写明，不冒充上游提交。
 - **CCF-B 会议论文** —— [Fault-Tolerating Edge Computing with Server Redundancy Based on a Variant of Group Degree Centrality](https://www.researchgate.net/publication/347461271_Fault-Tolerating_Edge_Computing_with_Server_Redundancy_Based_on_a_Variant_of_Group_Degree_Centrality)（IEEE SCC 2020）
+
+## 关注方向
+
+面向有状态负载的 quorum 感知调度 · 遵循数据库协议语义的 Kubernetes Operator · 能安全操作数据库的 AI Agent。
 
 ## 为什么写这本书
 
