@@ -13,6 +13,7 @@ editLink: false
 
 ## 复盘
 
+- [备份校验的线程号错配：把亚毫秒竞态变成确定性复现](./goinception-720-backup-thread-id.md) —— 5 个文件，+632 −2（520 行是测试）。身份取自另一条连接，以及怎么用连接池的 LIFO 语义把"间歇性"变成构造保证。
 - [gh-ost 管道死锁：一次 3 行修复背后的定位过程](./goinception-718-ghost-pipe-deadlock.md) —— `session/osc.go`，+3 −6。定位过程、根因、取舍，以及顺带发现的第二个静默 bug。
 
 ## 贡献索引

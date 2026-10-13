@@ -47,6 +47,7 @@ export default defineConfig({
           text: '开源贡献',
           items: [
             { text: '索引与说明', link: '/oss/' },
+            { text: '备份校验的线程号错配：亚毫秒竞态的确定性复现', link: '/oss/goinception-720-backup-thread-id' },
             { text: 'gh-ost 管道死锁：3 行修复背后的定位过程', link: '/oss/goinception-718-ghost-pipe-deadlock' },
           ],
         },
