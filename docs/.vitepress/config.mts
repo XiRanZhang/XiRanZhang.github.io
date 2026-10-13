@@ -28,6 +28,7 @@ export default defineConfig({
   themeConfig: {
     nav: [
       { text: '开源书', link: '/book/' },
+      { text: '技术文章', link: '/posts/' },
       { text: '开源贡献', link: '/oss/' },
       { text: '关于', link: '/about/' },
     ],
@@ -49,6 +50,15 @@ export default defineConfig({
             { text: '索引与说明', link: '/oss/' },
             { text: '备份校验的线程号错配：亚毫秒竞态的确定性复现', link: '/oss/goinception-720-backup-thread-id' },
             { text: 'gh-ost 管道死锁：3 行修复背后的定位过程', link: '/oss/goinception-718-ghost-pipe-deadlock' },
+          ],
+        },
+      ],
+      '/posts/': [
+        {
+          text: '技术文章',
+          items: [
+            { text: '全部文章', link: '/posts/' },
+            { text: 'gh-ost 原理及源码解析', link: '/posts/gh-ost-principles-and-source' },
           ],
         },
       ],

@@ -16,6 +16,10 @@ docs/
 │   ├── index.md                   # 序 + 全书结构
 │   ├── quorum-role-aware.md       # 第 3 章正文
 │   └── figures/                   # 章内插图
+├── posts/
+│   ├── index.md                   # 技术文章列表
+│   ├── gh-ost-principles-and-source.md
+│   └── figures/
 └── oss/
     ├── index.md                   # 开源贡献页（说明 + 索引）
     ├── _contributions.md          # 自动生成的索引片段，勿手工编辑
