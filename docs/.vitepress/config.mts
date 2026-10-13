@@ -12,6 +12,10 @@ export default defineConfig({
   cleanUrls: true,
   lastUpdated: true,
 
+  // `_` 前缀的文件是「被 @include 的片段」，不应生成独立页面
+  // （否则 docs/oss/_contributions.md 会变成一个只有表格的孤儿路由，并被搜索引擎收录）
+  srcExclude: ['**/_*.md'],
+
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
     ['meta', { name: 'author', content: 'XiRanZhang' }],
@@ -24,6 +28,7 @@ export default defineConfig({
   themeConfig: {
     nav: [
       { text: '开源书', link: '/book/' },
+      { text: '开源贡献', link: '/oss/' },
       { text: '关于', link: '/about/' },
     ],
 
@@ -34,6 +39,15 @@ export default defineConfig({
           items: [
             { text: '序：这本书要回答什么', link: '/book/' },
             { text: '3 · Quorum 与角色感知的变更与中断', link: '/book/quorum-role-aware' },
+          ],
+        },
+      ],
+      '/oss/': [
+        {
+          text: '开源贡献',
+          items: [
+            { text: '索引与说明', link: '/oss/' },
+            { text: 'gh-ost 管道死锁：3 行修复背后的定位过程', link: '/oss/goinception-718-ghost-pipe-deadlock' },
           ],
         },
       ],

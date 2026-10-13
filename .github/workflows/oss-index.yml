@@ -1,0 +1,44 @@
+name: Update OSS contribution index
+
+# 注意：这里刻意不订阅 push。若在 push 时运行，它自己提交的索引会再次触发本工作流，
+# 形成「提交 → 触发 → 提交」的循环；只靠定时与手动触发即可。
+on:
+  schedule:
+    - cron: '0 2 * * 1' # 每周一 02:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: oss-index
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Generate index
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/gen-oss-index.mjs
+
+      - name: Commit if changed
+        run: |
+          if [ -z "$(git status --porcelain docs/oss/_contributions.md)" ]; then
+            echo "索引无变化，跳过提交"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/oss/_contributions.md
+          git commit -m "chore: 更新开源贡献索引"
+          git push
