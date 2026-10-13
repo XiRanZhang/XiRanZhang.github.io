@@ -1,0 +1,15 @@
+{
+  "name": "xiranzhang-blog",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "XiRanZhang 的技术笔记与开源书稿",
+  "scripts": {
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs",
+    "preview": "vitepress preview docs"
+  },
+  "devDependencies": {
+    "vitepress": "^1.6.4"
+  }
+}
