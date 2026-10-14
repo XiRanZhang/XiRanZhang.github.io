@@ -43,28 +43,54 @@ gh-ost  write(stdout)  等管道有空间
 
 ## 根因：把"逻辑完成"当成了"进程结束"
 
-`execCommand` 为 stdout / stderr 各起了一个 reader goroutine，读到的每一行交给 `mysqlAnalyzeGhostOutput`，由它从 gh-ost 的输出里解析复制进度。出问题的是这个判断：
+`execCommand` 为 stdout / stderr 各起**一个** reader goroutine，每读一行交给 `mysqlAnalyzeGhostOutput` 解析进度。让 reader 提前退休的就是这一段：
 
 ```go
 if ok := s.mysqlAnalyzeGhostOutput(line, p); ok {
     wg.Done()      // 分析器说"完成了"
-    break          // 于是 reader 直接退出
+    break          // 于是这条流从此再没有消费者
 }
 ```
 
-`mysqlAnalyzeGhostOutput` 返回 `true` 的条件是 **进度 ≥ 100%**。而进度来自 gh-ost 自己的输出，gh-ost 的行数又来自 InnoDB 基于 `EXPLAIN` 的估算。
+返回 `true` 只有一个出口——进度行的整数百分比 ≥ 100。先把 `Copy: 12,345,678/12,700,000 100.8%; … ETA: due` 这样的行用正则取出百分比：
 
-**`EXPLAIN` 的估算可以严重偏离实际行数。** 这次是估算 1270 万、实际 7000 万——于是进度条早早就冲到了 100%，而此时真正的数据复制才走了不到五分之一。
+```go
+var regGhostPercent = regexp.MustCompile(`^Copy:.*?(\d+).\d+%;.*?ETA: (.*)?`)
+```
 
-于是：
+然后只有一个分支会让它返回 `true`：
 
-1. 两个 reader 都拿到"完成"信号 → 各自 `wg.Done()` 然后退出
-2. `wg.Wait()` 返回，代码顺序走到 `cmd.Wait()`
-3. 但 gh-ost **还在跑**，还在往 stdout 写
-4. 没有消费者了 → 64KB 管道缓冲写满 → gh-ost 阻塞在 `write()`
-5. `cmd.Wait()` 永远等不到 gh-ost 退出
+```go
+if pct >= 100 { complete = true }   // 唯一的 true 出口
+```
 
-**根子上的错误是把两个不同的生命周期绑在了一起：** "我解析到逻辑完成了" 和 "这个进程结束、管道关掉了" 是两件事。前者是业务判断，后者是进程事实，代码把它们当成了同一个信号。
+而百分比的分母是 **gh-ost 基于 `EXPLAIN` 估算的行数**。这次估算 1270 万、实际 7000 万，所以读到"100%"时真正拷完的还不到五分之一——**reader 以为自己干完了，其实还剩五千多万行。**
+
+### 为什么管道就此没人读了
+
+三件事叠在一起，把"提前退出"变成了死锁：
+
+1. **那条流只有这一个读者。** `go f(reader)` 每条流只起一个 goroutine，`break` 之后没有任何兜底消费者接手。
+2. **管道也不会被关闭。** 关闭靠 `execCommand` 里的 `defer stdout.Close()` / `defer stderr.Close()`，而它们要等 `execCommand` 返回——`execCommand` 正卡在等 gh-ost 退出。
+3. **gh-ost 并不知道对面不读了。** 它继续往那条管道写，64KB 缓冲填满后阻塞在 `write()`。
+
+于是形成一条闭环，没有任何一方会主动打破它：
+
+```text
+reader 读到「进度 100%」→ break 退出
+        ↓
+这条管道失去唯一消费者
+        ↓
+gh-ost 继续写 → 64KB 缓冲写满 → 阻塞在 write()
+        ↓
+父进程 cmd.Wait() 等 gh-ost 退出 → 永远等不到
+        ↓
+管道的 Close()（defer）等 execCommand 返回 → 也永远等不到
+```
+
+> **一处精确性说明**：`mysqlAnalyzeGhostOutput` 对返回值是**无状态**的——它只解析当前这一行，并不记忆"曾经到过 100%"。所以严格说是**读到进度行的那条流的 reader 退休**；另一条流的 reader 只在自己流里也出现 ≥100% 的进度行时才会退出。事故现场父进程能停在 `cmd.Wait()`，说明当时两条 reader 都已退出（`wg.Add(2)` 要等两个 `Done`）。但即便只退出一条，死锁同样成立——只是卡点从 `cmd.Wait()` 变成 `wg.Wait()`。
+
+**根子上的错误是把两个不同的生命周期绑在了一起：** "我解析到逻辑完成了"和"这个进程结束、管道关掉了"是两件事。前者是 gh-ost 基于估算得出的业务判断，后者是进程事实。代码用一个信号同时表达两者，就必然在某一天错——而且错的方式是**静默挂起，不是报错**。
 
 ## 修复：让 reader 只管读到 EOF
 
