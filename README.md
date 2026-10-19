@@ -16,21 +16,28 @@ docs/
 │   ├── index.md                   # 序 + 全书结构
 │   ├── quorum-role-aware.md       # 第 3 章正文
 │   └── figures/                   # 章内插图
-├── posts/
-│   ├── index.md                   # 技术文章列表
-│   ├── gh-ost-principles-and-source.md
-│   └── figures/
-└── oss/
-    ├── index.md                   # 开源贡献页（说明 + 索引）
+└── gh-ost/
+    ├── index.md                   # 栏目总览（机制 / 复盘 / 贡献索引）
     ├── _contributions.md          # 自动生成的索引片段，勿手工编辑
-    └── goinception-718-ghost-pipe-deadlock.md   # PR 复盘
+    ├── gh-ost-principles-and-source.md
+    ├── gh-ost-unique-index-data-loss.md
+    ├── gh-ost-critical-load-connection-spike.md
+    ├── goinception-718-ghost-pipe-deadlock.md
+    ├── goinception-720-backup-thread-id.md
+    └── figures/
 
 scripts/gen-oss-index.mjs          # 生成贡献索引（由 Actions 定时运行）
 ```
 
+## 栏目划分
+
+- `/book/` —— 开源书《有状态工作负载在 Kubernetes 上的调度与运维》。
+- `/gh-ost/` —— MySQL 在线改表：gh-ost 机制拆解、线上问题复盘，以及 goInception 侧的 PR 复盘。
+  所有技术文章与开源复盘都收在这一个栏目下，按「机制 / 复盘」分组。
+
 ## 开源贡献索引
 
-`docs/oss/_contributions.md` 由 `scripts/gen-oss-index.mjs` 通过 GitHub Search API 生成，
+`docs/gh-ost/_contributions.md` 由 `scripts/gen-oss-index.mjs` 通过 GitHub Search API 生成，
 由 `.github/workflows/oss-index.yml` 每周一自动运行并提交，也可手动触发。
 
 ```bash

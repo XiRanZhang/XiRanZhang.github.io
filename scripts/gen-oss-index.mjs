@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * 生成 docs/oss/_contributions.md —— 作者在 GitHub 上提交的公开 PR 与 Issue 索引。
+ * 生成 docs/gh-ost/_contributions.md —— 作者在 GitHub 上提交的公开 PR 与 Issue 索引。
  *
  * 由 .github/workflows/oss-index.yml 定时运行；本地手动运行需要 token：
  *   GITHUB_TOKEN=$(gh auth token) node scripts/gen-oss-index.mjs
@@ -17,7 +17,7 @@ import { dirname, join } from 'node:path'
 
 const AUTHOR = 'XiRanZhang'
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
-const OUT = join(ROOT, 'docs', 'oss', '_contributions.md')
+const OUT = join(ROOT, 'docs', 'gh-ost', '_contributions.md')
 
 const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN
 if (!token) {

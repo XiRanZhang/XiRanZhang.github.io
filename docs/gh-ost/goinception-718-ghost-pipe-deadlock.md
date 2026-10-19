@@ -174,4 +174,4 @@ progressPct := 100.0 * GetTotalRowsCopied() / rowsEstimate   // 没有上限截�
 
 选择 drain 到 EOF，代价是任务结束前多读一段日志、多一点内存。**换来的是"任何情况下管道都有人消费"这个不变量**——不依赖进度估算是否准确。对一个正确性优先的改表工具，这个交换是划算的。
 
-> 想先弄懂 gh-ost 的整体机制（影子表、row-copy、binlog 回放、cut-over），可以看[《gh-ost 原理及源码解析》](/posts/gh-ost-principles-and-source)——那个管道就是这篇文章 2.3 节里"应用 binlog"那一步的底座。
+> 想先弄懂 gh-ost 的整体机制（影子表、row-copy、binlog 回放、cut-over），可以看[《gh-ost 原理及源码解析》](/gh-ost/gh-ost-principles-and-source)——那个管道就是这篇文章 2.3 节里"应用 binlog"那一步的底座。

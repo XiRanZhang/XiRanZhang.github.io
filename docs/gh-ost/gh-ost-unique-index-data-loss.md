@@ -67,7 +67,7 @@ insert /* gh-ost db.t */ ignore into db.t_gho (id, name)
 
 `IGNORE` 的语义是"遇到唯一键冲突就跳过这行、不报错"。于是拷贝那 7 行时，5 行因为 `name` 重复被静默跳过，影子表里只剩 2 行。
 
-**而且这个 `IGNORE` 是必须的。** 因为 gh-ost 里 binlog 回放的优先级高于行拷贝（见[《gh-ost 原理及源码解析》](/posts/gh-ost-principles-and-source)的 2.3 节），某一行可能已经被 binlog 事件写进影子表了，拷贝语句再插一次就会撞键——没有 `IGNORE` 就会直接报错。
+**而且这个 `IGNORE` 是必须的。** 因为 gh-ost 里 binlog 回放的优先级高于行拷贝（见[《gh-ost 原理及源码解析》](/gh-ost/gh-ost-principles-and-source)的 2.3 节），某一行可能已经被 binlog 事件写进影子表了，拷贝语句再插一次就会撞键——没有 `IGNORE` 就会直接报错。
 
 ### 第二步：binlog 回放用的是 `REPLACE INTO`（v1.1.8 已修）
 

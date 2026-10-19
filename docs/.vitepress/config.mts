@@ -13,7 +13,7 @@ export default defineConfig({
   lastUpdated: true,
 
   // `_` 前缀的文件是「被 @include 的片段」，不应生成独立页面
-  // （否则 docs/oss/_contributions.md 会变成一个只有表格的孤儿路由，并被搜索引擎收录）
+  // （否则 docs/gh-ost/_contributions.md 会变成一个只有表格的孤儿路由，并被搜索引擎收录）
   srcExclude: ['**/_*.md'],
 
   head: [
@@ -28,8 +28,7 @@ export default defineConfig({
   themeConfig: {
     nav: [
       { text: '开源书', link: '/book/' },
-      { text: '技术文章', link: '/posts/' },
-      { text: '开源贡献', link: '/oss/' },
+      { text: 'gh-ost', link: '/gh-ost/' },
       { text: '关于', link: '/about/' },
     ],
 
@@ -43,24 +42,16 @@ export default defineConfig({
           ],
         },
       ],
-      '/oss/': [
+      '/gh-ost/': [
         {
-          text: '开源贡献',
+          text: 'gh-ost 实战笔记',
           items: [
-            { text: '索引与说明', link: '/oss/' },
-            { text: '备份校验的线程号错配：亚毫秒竞态的确定性复现', link: '/oss/goinception-720-backup-thread-id' },
-            { text: 'gh-ost 管道死锁：3 行修复背后的定位过程', link: '/oss/goinception-718-ghost-pipe-deadlock' },
-          ],
-        },
-      ],
-      '/posts/': [
-        {
-          text: '技术文章',
-          items: [
-            { text: '全部文章', link: '/posts/' },
-            { text: 'DROP 旧表后连接数暴涨：critical-load 误判', link: '/posts/gh-ost-critical-load-connection-spike' },
-            { text: 'gh-ost 加唯一索引为什么会静默丢数据', link: '/posts/gh-ost-unique-index-data-loss' },
-            { text: 'gh-ost 原理及源码解析', link: '/posts/gh-ost-principles-and-source' },
+            { text: '总览与贡献索引', link: '/gh-ost/' },
+            { text: '原理及源码解析', link: '/gh-ost/gh-ost-principles-and-source' },
+            { text: '加唯一索引为什么会静默丢数据', link: '/gh-ost/gh-ost-unique-index-data-loss' },
+            { text: 'DROP 旧表后连接数暴涨', link: '/gh-ost/gh-ost-critical-load-connection-spike' },
+            { text: '复盘 · 管道死锁（goInception #718）', link: '/gh-ost/goinception-718-ghost-pipe-deadlock' },
+            { text: '复盘 · 线程号错配（goInception #720）', link: '/gh-ost/goinception-720-backup-thread-id' },
           ],
         },
       ],
