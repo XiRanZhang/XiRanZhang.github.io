@@ -119,6 +119,80 @@ progressPct := 100.0 * GetTotalRowsCopied() / rowsEstimate   // 没有上限截�
 
 这也解释了这个 bug 的形状：**它不是"偶发"，而是"条件齐备时必然"**——信号必然出现，只要 100% 之后还有足够长的输出，就一定挂。估算偏低的作用只是把那个窗口从"秒级"放大到"小时级"。
 
+### EXPLAIN 到底为什么估不准？
+
+先把 gh-ost 的取数方式说清楚（`Inspector.estimateTableRowsViaExplain`）：
+
+```go
+query := fmt.Sprintf(`explain select /* gh-ost */ * from %s.%s where 1=1`,
+    databaseName, tableName)
+
+// 只取 rows 这一列
+isp.migrationContext.RowsEstimate = rowMap.GetInt64("rows")
+```
+
+**它读的是 `EXPLAIN` 的 `rows` 列——这个数字不是数出来的，是估出来的。** `WHERE 1=1` 只是让语句合法、不影响结果：优化器会把它简化掉，gh-ost 本质上是在问"你认为这张表有多少行"。
+
+那这个"认为"从哪来？InnoDB 的索引统计。误差主要有四个来源。
+
+**一、统计来自随机采样，而采样量是固定的。**
+
+MySQL 8.0 默认 `innodb_stats_persistent=ON`，统计持久化到 `mysql.innodb_table_stats.n_rows`；采样量由 `innodb_stats_persistent_sample_pages` 控制，**默认只采 20 个索引页**（每页 16KB，合计 320KB）。
+
+按 7000 万行、每行约 200B 估算，整表约 14GB——**320KB 的采样比例大约是 1/45000**。InnoDB 再从这 20 个页的页内平均行数外推整张表，样本越小，外推误差越大。
+
+这也解释了一个反直觉的现象：**小表从来不出事，大表才出事**。采样量是固定的，表越大，相对覆盖率越低。
+
+**二、统计是快照，会滞后。**
+
+`innodb_stats_auto_recalc` 默认开启，但它只在"表数据变化约 10%"时**异步**重算。批量导入、大范围删除之后、下一次 `ANALYZE TABLE` 之前，`n_rows` 可能和现状差很远。
+
+所以同一条 ALTER，上午跑没事、下午跑就挂——**不是代码变了，是统计变了。**
+
+**三、采样假设"数据在页间均匀分布"。**
+
+- 自增主键叠加大范围删除，页填充率会极不均匀；
+- 热点写入集中在尾部；
+- 大字段让每页能容纳的行数差别巨大。
+
+外推时这些偏差会被放大。这是最难预测的一类误差：它既不随表变大而收敛，也不随 `ANALYZE TABLE` 而消失。
+
+**四、误差有方向，而方向决定后果。**
+
+`EXPLAIN` 偏高和偏低都很常见。但结合上一节：**偏高是安全的**（分母偏大，进度到不了 100%，reader 不会提前退出），**偏低才是致命的**（信号提前出现，无人消费的窗口被拉长）。你没法控制方向，所以只能不依赖这个数。
+
+**那为什么不用 `COUNT(*)`？**
+
+因为贵。千万级表上 `COUNT(*)` 要扫索引或全表，可能几十分钟，而且是对线上加负载——gh-ost 存在的意义就是尽量减小影响，所以它默认拿精度换速度。
+
+`--exact-rowcount` 就是显式要求这个精度：
+
+```sql
+select /* gh-ost */ count(*) as count_rows from db.t
+```
+
+但它也有边界：**它准确的是"开始拷贝那一刻"**。如果迁移期间表继续增长，实际拷贝行数仍会超过这个数。gh-ost 用 `RowsDeltaEstimate` 在回放 binlog 时按 insert/delete 的净增减做修正，但那只是近似。所以 `--exact-rowcount` 降低风险，不是消除。
+
+**自己验证一下本实例的偏差：**
+
+```sql
+-- 1. 采样配置（MySQL 8.0 默认 20 页）
+SHOW VARIABLES LIKE 'innodb_stats%';
+
+-- 2. 优化器的估算
+EXPLAIN SELECT * FROM db.t WHERE 1=1;
+
+-- 3. 持久化统计里的 n_rows 及其最后更新时间
+SELECT table_name, n_rows, last_update
+FROM mysql.innodb_table_stats
+WHERE database_name = 'db' AND table_name = 't';
+
+-- 4. 与真实值对比（大表请在从库或低峰执行，或直接用 --exact-rowcount）
+SELECT COUNT(*) FROM db.t;
+```
+
+顺带一个坑：`EXPLAIN ANALYZE` 能给出实际行数，但**它会真的执行查询**——拿它去跑千万级全表扫描，本身就是一次事故。
+
 **根子上的错误是把两个不同的生命周期绑在了一起：** "我解析到逻辑完成了"和"这个进程结束、管道关掉了"是两件事。前者是 gh-ost 基于估算得出的业务判断，后者是进程事实。代码用一个信号同时表达两者，就必然在某一天错——而且错的方式是**静默挂起，不是报错**。
 
 ## 修复：让 reader 只管读到 EOF
