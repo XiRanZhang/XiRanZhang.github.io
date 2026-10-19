@@ -20,8 +20,6 @@ title: 关于
 
 - **数据库管控平台（DBaaS）** —— 分库分表场景的 SQL 变更工单引擎（路由解析 + AST 语句分级）、异地备份体系、以及小米分库分表中间件 [Gaea](https://github.com/XiaoMi/Gaea) 的平台管理面；抽象出统一的 `DBService` 引擎接口，大幅降低新引擎的接入开发量。
 
-- **多集群调度** —— 为跨可用区／跨地域的 MySQL 容器集群设计轮询、负载均衡、拓扑亲和等多策略调度算法，以及可插拔的运维操作接口框架。
-
 ## 发表与开源
 
 - **[goInception #718](https://github.com/hanchuanchuan/goInception/pull/718)** —— 修复 gh-ost 执行器的管道死锁：InnoDB 行数估算偏差导致进度计数器溢出、reader 退出、管道写满阻塞，生产环境曾使迁移挂起一小时以上。改动只有 3 行，工作量全在定位上。（**PR 仍在 review 中**，尚未合并。）
