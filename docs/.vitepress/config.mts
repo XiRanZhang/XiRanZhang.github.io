@@ -27,23 +27,23 @@ export default defineConfig({
 
   themeConfig: {
     nav: [
-      { text: '开源书', link: '/book/' },
+      { text: '有状态负载', link: '/stateful/' },
       { text: 'gh-ost', link: '/gh-ost/' },
       { text: '关于', link: '/about/' },
     ],
 
     sidebar: {
-      '/book/': [
+      '/stateful/': [
         {
-          text: '有状态工作负载在 Kubernetes 上的调度与运维',
+          text: '有状态负载在 Kubernetes 上',
           items: [
-            { text: '序：这本书要回答什么', link: '/book/' },
-            { text: '3 · Quorum 与角色感知的变更与中断', link: '/book/quorum-role-aware' },
+            { text: '主题与文章列表', link: '/stateful/' },
+            { text: 'Quorum 与角色感知的变更与中断', link: '/stateful/quorum-role-aware' },
             {
-              text: '附录 · 故障案例',
+              text: '故障案例',
               items: [
-                { text: 'fs.aio-max-nr 耗尽导致实例初始化失败', link: '/book/cases/aio-max-nr' },
-                { text: '内核 OOM Killer 导致实例起不来', link: '/book/cases/oom-killer' },
+                { text: 'fs.aio-max-nr 耗尽导致实例初始化失败', link: '/stateful/cases/aio-max-nr' },
+                { text: '内核 OOM Killer 导致实例起不来', link: '/stateful/cases/oom-killer' },
               ],
             },
           ],

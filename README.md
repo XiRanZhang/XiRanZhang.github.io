@@ -1,6 +1,6 @@
 # XiRanZhang.github.io
 
-《有状态工作负载在 Kubernetes 上的调度与运维》开源书稿，以及相关技术笔记。
+两组技术文章：**有状态负载在 Kubernetes 上**（调度、变更与运维），以及 **gh-ost 实战笔记**。
 
 站点基于 [VitePress](https://vitepress.dev/) 构建，通过 GitHub Actions 发布到 GitHub Pages。
 
@@ -12,10 +12,11 @@ docs/
 ├── index.md                       # 首页
 ├── about.md                       # 关于
 ├── public/favicon.svg
-├── book/
-│   ├── index.md                   # 序 + 全书结构
-│   ├── quorum-role-aware.md       # 第 3 章正文
-│   └── figures/                   # 章内插图
+├── stateful/                      # 有状态负载在 Kubernetes 上
+│   ├── index.md                   # 主题说明 + 文章列表
+│   ├── quorum-role-aware.md       # Quorum 与角色感知的变更与中断
+│   ├── cases/                     # 故障案例（aio-max-nr / OOM killer）
+│   └── figures/
 └── gh-ost/
     ├── index.md                   # 栏目总览（机制 / 复盘 / 贡献索引）
     ├── _contributions.md          # 自动生成的索引片段，勿手工编辑
@@ -31,9 +32,9 @@ scripts/gen-oss-index.mjs          # 生成贡献索引（由 Actions 定时运�
 
 ## 栏目划分
 
-- `/book/` —— 开源书《有状态工作负载在 Kubernetes 上的调度与运维》。
+- `/stateful/` —— 有状态负载在 Kubernetes 上：控制器语义与协议约束的错位，以及节点级资源不被调度器建模导致的故障案例。
 - `/gh-ost/` —— MySQL 在线改表：gh-ost 机制拆解、线上问题复盘，以及 goInception 侧的 PR 复盘。
-  所有技术文章与开源复盘都收在这一个栏目下，按「机制 / 复盘」分组。
+  所有 gh-ost 相关内容收在这一个栏目下，按「机制 / 复盘」分组。
 
 ## 开源贡献索引
 
@@ -69,11 +70,11 @@ npm run preview  # 预览构建产物
 - 图片放在与正文同级的 `figures/` 目录，用相对路径引用，便于 Vite 处理资源。
 - 涉及具体开源项目的描述基于公开架构；版本演进较快，落地前请对照在用版本核对。
 
-## 新增一章
+## 新增一篇文章
 
-1. 在 `docs/book/` 下新建 Markdown 文件，frontmatter 写 `title`。
-2. 在 `docs/.vitepress/config.mts` 的 `sidebar['/book/']` 中补一条 `{ text, link }`。
-3. 在 `docs/book/index.md` 的结构表里把状态改为「已发布」。
+1. 在对应栏目目录（`docs/stateful/` 或 `docs/gh-ost/`）下新建 Markdown 文件，frontmatter 写 `title`。
+2. 在 `docs/.vitepress/config.mts` 的对应 `sidebar['/<栏目>/']` 中补一条 `{ text, link }`。
+3. 在该栏目落地页（`docs/stateful/index.md` / `docs/gh-ost/index.md`）的列表里补一行。
 
 > VitePress 在构建时检查死链，侧边栏里不要提前放还不存在的页面链接。
 
