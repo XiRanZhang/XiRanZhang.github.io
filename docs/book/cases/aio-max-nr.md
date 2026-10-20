@@ -21,7 +21,7 @@ date: 2026-10-14
 panic: Prepare mysql env failed: output: , err: exit status 1
 goroutine 1 [running]:
 main.main()
-mysql_dir_initialize failed
+init entrypoint failed
 WARN exited: mysqld (exit status 1; not expected)
 INFO spawned: 'mysqld' with pid ...
 INFO  Check dir initialized: .../.initialized is exist: false
