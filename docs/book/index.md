@@ -24,6 +24,7 @@ Kubernetes 的调度与运维抽象，是为**无状态负载**设计的。它�
 | 6 | 弹性扩缩与 Serverless | 整理中 |
 | 附录 | 理论工具箱与参考工作 | 整理中 |
 | 案例 | [fs.aio-max-nr 耗尽：MySQL 实例初始化失败](./cases/aio-max-nr.md) | 已发布 |
+| 案例 | [内核 OOM Killer：MySQL 实例起不来](./cases/oom-killer.md) | 已发布 |
 
 ## 阅读约定
 
