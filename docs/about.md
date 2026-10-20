@@ -12,7 +12,7 @@ title: 关于
 
 - **有状态 MySQL on Kubernetes** —— 基于开源 [KubeBlocks](https://github.com/apecloud/kubeblocks) 自研 Operator 的核心研发，负责备份回放、带数据水平扩容、物理机与容器双向在线迁移三个模块。有状态扩缩容的难点不在扩容本身，而在 PVC 绑定、副本同步、主从拓扑变更这条链路必须有序且幂等——尤其当多个控制器并发更新同一个 CR 的时候。
 
-- **规模化 MySQL 运维** —— 建设并维护大规模集群的运维平台；对 [gh-ost](https://github.com/github/gh-ost)（在线 DDL）与 [Orchestrator](https://github.com/openark/orchestrator)（高可用与复制管理）有源码级理解。
+- **规模化 MySQL 运维** —— 建设并维护大规模集群的运维平台；对 [gh-ost](https://github.com/github/gh-ost)（在线 DDL）有源码级理解。
 
 - **统一 SQL 执行层** —— 从 0 到 1 独立设计平台唯一的 SQL 变更执行入口，串起「审核 → 审批 → 执行 → 回调 → 自动回滚」全流程。压测定位到「锁内网络 I/O + 热路径互斥锁」双重瓶颈后重建连接池，高并发下请求延迟下降两个数量级、吞吐提升一个数量级以上。
 
