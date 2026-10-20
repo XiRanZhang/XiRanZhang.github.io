@@ -39,6 +39,12 @@ export default defineConfig({
           items: [
             { text: '序：这本书要回答什么', link: '/book/' },
             { text: '3 · Quorum 与角色感知的变更与中断', link: '/book/quorum-role-aware' },
+            {
+              text: '附录 · 故障案例',
+              items: [
+                { text: 'fs.aio-max-nr 耗尽导致实例初始化失败', link: '/book/cases/aio-max-nr' },
+              ],
+            },
           ],
         },
       ],
