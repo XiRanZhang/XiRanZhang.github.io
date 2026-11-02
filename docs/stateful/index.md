@@ -21,6 +21,7 @@ Kubernetes 的调度与运维抽象是为无状态负载设计的：管理 Pod�
 - [Quorum 与角色感知的变更与中断](./quorum-role-aware.md) —— 滚动升级、节点排空、并发运维如何依次击穿 quorum，以及 KubeBlocks 是怎么把这部分语义引入控制面的。
 - [fs.aio-max-nr 耗尽：MySQL 实例初始化失败](./cases/aio-max-nr.md) —— 节点级内核配额被现有实例占满，新实例在 `io_setup()` 上确定性失败；CPU 和内存还有余量也救不了。
 - [内核 OOM Killer：MySQL 实例起不来](./cases/oom-killer.md) —— 启动峰值打穿 cgroup 上限，崩溃恢复又把内存需求推高，形成重启闭环。
+- [XtraBackup 8.0 热备为什么全程持锁](./cases/xtrabackup-backup-lock-replica-lag.md) —— backup lock 只挡 DDL，但备份跑在从库时，一条 DDL 的等待会被提交顺序放大成整段复制延迟。
 
 ## 计划中
 
