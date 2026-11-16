@@ -45,6 +45,7 @@ export default defineConfig({
                 { text: 'fs.aio-max-nr 耗尽导致实例初始化失败', link: '/stateful/cases/aio-max-nr' },
                 { text: '内核 OOM Killer 导致实例起不来', link: '/stateful/cases/oom-killer' },
                 { text: 'XtraBackup backup lock 导致从库延迟', link: '/stateful/cases/xtrabackup-backup-lock-replica-lag' },
+                { text: 'Seconds_Behind_Master 假 0 与跨地域追 binlog', link: '/stateful/cases/replica-lag-false-zero-sbm' },
               ],
             },
           ],

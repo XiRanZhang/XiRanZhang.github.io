@@ -22,6 +22,7 @@ Kubernetes 的调度与运维抽象是为无状态负载设计的：管理 Pod�
 - [fs.aio-max-nr 耗尽：MySQL 实例初始化失败](./cases/aio-max-nr.md) —— 节点级内核配额被现有实例占满，新实例在 `io_setup()` 上确定性失败；CPU 和内存还有余量也救不了。
 - [内核 OOM Killer：MySQL 实例起不来](./cases/oom-killer.md) —— 启动峰值打穿 cgroup 上限，崩溃恢复又把内存需求推高，形成重启闭环。
 - [XtraBackup 8.0 热备为什么全程持锁](./cases/xtrabackup-backup-lock-replica-lag.md) —— backup lock 只挡 DDL，但备份跑在从库时，一条 DDL 的等待会被提交顺序放大成整段复制延迟。
+- [Seconds_Behind_Master 为 0，从库却落后 6GB](./cases/replica-lag-false-zero-sbm.md) —— 它测的是 SQL 线程相对已收到 relay log 的延迟；IO 线程跨地域拉不动 binlog 时，延迟指标会稳定显示 0。
 
 ## 计划中
 
